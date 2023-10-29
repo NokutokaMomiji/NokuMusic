@@ -16,6 +16,8 @@ namespace NokuMusic {
 
             void LoadResources();
 
+            void ScanFolders(int n);
+
             Interface();
             ~Interface();
 
@@ -39,8 +41,9 @@ namespace NokuMusic {
             std::vector<InterfacePage*> Pages;
             static Interface* Instance;
             Window* mainWindow;
-            AlbumPage* albumPage;
-            InterfacePage* currentPage;
+            AlbumPage* albumPage = nullptr;
+            InterfacePage* currentPage = nullptr;
+            bool initPages = false;
             // Manager for things that are general to each individual interface. For example, SDL Textures (since they are 
             // Renderer bound...).
             ResourceManager* internalManager;

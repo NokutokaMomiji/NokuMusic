@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <string.h>
 #include "Album.h"
+#include "Utilities/FileManager.h"
 
 using namespace NokuMusic;
 
@@ -44,11 +45,30 @@ void Album::AddSong(Song* song) {
     
     if (albumArt.isEmpty())
         albumArt = song->GetArt();
+    else if (song->GetArt().isEmpty())
+        song->SetArt(albumArt);
 
 }
 
 bool Album::RemoveSong(Song* song) {
     return false;
+}
+
+void Album::FindArtIfNone() {
+    if (!albumArt.isEmpty() || numOfSongs == 0)
+        return;
+
+    albumArt = FileManager::ScanForAlbumCover(Songs[0]->GetPath());
+
+    if (albumArt.isEmpty())
+        return;
+
+    for (const auto& song : Songs) {
+        if (!song->GetArt().isEmpty())
+            continue;
+
+        song->SetArt(albumArt);
+    }
 }
 
 const char* Album::GetTitle() {

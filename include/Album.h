@@ -18,6 +18,8 @@ namespace NokuMusic {
 			void AddSong(Song* song);
 			bool RemoveSong(Song* song);
 
+			void FindArtIfNone();
+
 			const char* GetTitle();
 			const char* GetArtist();
 			int GetYear();

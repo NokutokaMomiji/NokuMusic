@@ -36,9 +36,17 @@ namespace NokuMusic {
             const char* GetDuration();
             int GetYear();
 
+            inline void SetArt(TagLib::ByteVector imageData) {
+                if (Art.isEmpty())
+                    Art = imageData;
+            }
+
             void SetAlbumObject(NokuMusic::Album* album);
 
             static Song* GetSong(int index);
+            static int GetNumOfSongs() {
+                return Songs.size();
+            }
 
 			void PrintData();
         private:

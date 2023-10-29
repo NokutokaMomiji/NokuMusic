@@ -63,7 +63,8 @@ Sprite::Sprite(Window* window, TagLib::ByteVector byteVector) {
         SetDimensions();
         return;
     }
-
+    printf("> size: %d\n", byteVector.size());
+    
     SDL_RWops* rw = SDL_RWFromMem(byteVector.data(), byteVector.size());
     SDL_Surface* Image = IMG_Load_RW(rw, 1);
 
@@ -71,8 +72,12 @@ Sprite::Sprite(Window* window, TagLib::ByteVector byteVector) {
         SDL_RWclose(rw);
         printf("> [Sprite]: Failed to load image from byte vector.\n");
         printf("> [Sprite]: Error: %s\n", SDL_GetError());
+        texture = defaultTexture;
+        SetDimensions();
         return;
     }
+
+    printf("> format: %s\n", SDL_GetPixelFormatName(Image->format->format));
 
     SDL_RWclose(rw);
 
@@ -80,7 +85,8 @@ Sprite::Sprite(Window* window, TagLib::ByteVector byteVector) {
 
     if (texture == NULL) {
         printf("> [Sprite]: Failed to create texture from image raw data surface.\n");
-        return;
+        printf("> [Sprite]: Error: %s\n", SDL_GetError());
+        texture = defaultTexture;
     }
 
     SetDimensions();

@@ -12,6 +12,9 @@
 #include "taglib/id3v2frame.h"
 #include "taglib/attachedpictureframe.h"
 #include "taglib/tpropertymap.h"
+#include "taglib/mp4file.h"
+#include "taglib/mp4item.h"
+#include "taglib/mp4coverart.h"
 
 #include "Song.h"
 #include "Album.h"
@@ -120,7 +123,6 @@ bool Song::LoadArt() {
 		delete musicFile;
 		return false;
 	}
-
 	if (TagLib::MPEG::File* mpegFile = dynamic_cast<TagLib::MPEG::File*>(musicFile->file())) {
 		if (mpegFile->hasID3v2Tag()) {
 			TagLib::ID3v2::Tag* mpegTag = mpegFile->ID3v2Tag();
@@ -135,6 +137,27 @@ bool Song::LoadArt() {
 			}
 		}
 	}
+	else if (TagLib::MP4::File* mp4File = dynamic_cast<TagLib::MP4::File*>(musicFile->file())) {
+		if (mp4File->hasMP4Tag()) {
+			TagLib::MP4::Tag* mp4Tag = mp4File->tag();
+			if (mp4Tag) {
+				TagLib::MP4::ItemMap mp4Map = mp4Tag->itemMap();
+				for (auto it = mp4Map.begin(); it != mp4Map.end(); ++it) {
+					TagLib::MP4::CoverArtList art = it->second.toCoverArtList();
+					if (!art.isEmpty()) {
+						Art = art[0].data();
+					}
+				}
+			}
+		}
+	}
+
+
+
+	/*
+	if (Art.isEmpty()) {
+		Art = FileManager::ScanForAlbumCover(Path);
+	}*/
 
 	return true;
 }

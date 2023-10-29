@@ -34,3 +34,7 @@ const char* Utilities::WCharToChar(std::wstring s) {
 
     return buffer;
 }
+
+bool Utilities::BeginsWith(const char* string, const char* substring) {
+    return (strncmp(string, substring, strlen(substring)) == 0);
+}

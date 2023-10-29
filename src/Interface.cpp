@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdexcept>
 #include <clocale>
+#include <math.h>
+#include <thread>
+#include <chrono>
 
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_FontCache.h"
@@ -63,25 +66,48 @@ void OnFocusLost() {
 
 }
 
+static void ActualScan() {
+    printf("> In Actual Scan.\n");
+    FileManager::ScanPath("D:/Archivos de Usuario/Descargas/KodamaSounds - ECLECTIC RESONANCE Detuned Alloy");
+    FileManager::ScanPath("D:/Archivos de Usuario/Escritorio/Music");
+    FileManager::ScanPath("D:/Archivos de Usuario/Descargas/GODDESS_OF_VICTORY_NIKKE_ORIGINAL_SOUNDTRACK");
+}
+
+void Interface::ScanFolders(int n) {
+    auto start = std::chrono::high_resolution_clock::now();
+    std::thread anotherThread(ActualScan);
+    anotherThread.join();
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    printf("> %lld\n", duration.count());
+    printf("> num of songs: %d\n", Song::GetNumOfSongs());
+    printf("> After join.\n");
+
+    initPages = true;
+}
+
 void Interface::Run() {
     SDL_Event event;
 
-    FileManager::ScanPath("D:/Archivos de Usuario/Escritorio/Music");
-    FileManager::ScanPath("D:/Archivos de Usuario/Descargas/GODDESS_OF_VICTORY_NIKKE_ORIGINAL_SOUNDTRACK");
+    std::thread scannerThread([](Interface* i){
+        i->ScanFolders(0);
+    }, this);
 
+    scannerThread.detach();
+    /*
 	Song* song = new Song("Temp/test.mp3", true);
 	song->PrintData();
     Player::Play(song);
-    
-    albumPage = new AlbumPage();
-    albumPage->Init(mainWindow, internalManager->GetFont("default"));
+    */
 
     printf("Beginning loop.\n");
     while (isRunning) {
         timeLast = timeNow;
         timeNow = SDL_GetPerformanceCounter();
         deltaTime = (double)((timeNow - timeLast) * 1000 / (double)SDL_GetPerformanceFrequency());
-	
+
+        Uint64 Start = SDL_GetPerformanceCounter();
+
         while (SDL_PollEvent(&event)) {
             switch(event.type) {
                 case SDL_QUIT:          Quit(); break;
@@ -94,7 +120,15 @@ void Interface::Run() {
                 }
             }
         }
-    
+
+        if (initPages) {
+            initPages = false;
+
+            albumPage = new AlbumPage();
+            albumPage->Init(mainWindow, internalManager->GetFont("default"));
+            currentPage = albumPage;
+        }
+
         PreUpdate();
         Update();
         PostUpdate();
@@ -102,6 +136,12 @@ void Interface::Run() {
         PreRender();
         Render();
         PostRender();
+
+        Uint64 End = SDL_GetPerformanceCounter();
+
+        float elapsedMS = (End - Start) / (float)SDL_GetPerformanceFrequency() * 1000.0f;
+        float r = abs(floor(16.666f - elapsedMS));
+        SDL_Delay(r);
     }
 
     SDL_Quit();
@@ -133,8 +173,11 @@ void Interface::Render() {
     
     FC_DrawAlign(internalManager->GetFont("icons"), windowRenderer, topPart.w - 128, ((topPart.h / 2) - (iconHeight / 2)), FC_ALIGN_RIGHT, ICON_FA_SEARCH);
     FC_Draw(internalManager->GetFont("title"), windowRenderer, 32, ((topPart.h / 2) - (height / 2)), "Nokutoka Music");
+    if (currentPage != nullptr) {
+        //printf("> Fuck.\n");
+        currentPage->Draw();
+    }
 
-    albumPage->Draw();
 }
 
 void Interface::PostRender() {

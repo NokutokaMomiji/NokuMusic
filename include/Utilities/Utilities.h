@@ -8,6 +8,7 @@ namespace NokuMusic {
         public:
             static const char* ShortenTo(const char* text, int length);
             static const char* WCharToChar(std::wstring s);
+            static bool BeginsWith(const char* string, const char* substring);
     };
 }
 
