@@ -6,12 +6,12 @@ So, thus far, I haven't found a music player for PC that contains all the things
 In response, I had made a simple music player in GameMaker that allowed me to have the basic functionalities I wanted. After the change of the GameMaker runner from x86 to x64, that plan went sour due to the library I was using, so I decided to create a second music player, this time in C++ because I love suffering.
 
 ## Components:
-- (SDL2)[https://github.com/libsdl-org/SDL] (Contains released precompiled binaries and static libraries).
-- (SDL_Mixer)[https://github.com/libsdl-org/SDL_mixer] (You can get the necessary DLLs from the non-dev version).
-- [https://github.com/libsdl-org/SDL_ttf](SDL_ttf)
-- [https://github.com/grimfang4/SDL_FontCache](SDL_FontCache)
-- [https://taglib.org](Taglib) (Requires to be built from scratch and it is a nightmare to interact with sometimes.)
-- [https://github.com/ThomasMonkman/filewatch/tree/master] (Filewatch)
+- (https://github.com/libsdl-org/SDL)[SDL2] (Contains released precompiled binaries and static libraries).
+- (https://github.com/libsdl-org/SDL_mixer)[SDL_Mixer] (You can get the necessary DLLs from the non-dev version).
+- (https://github.com/libsdl-org/SDL_ttf)[SDL_ttf]
+- (https://github.com/grimfang4/SDL_FontCache)[SDL_FontCache]
+- (https://taglib.org)[Taglib] (Requires to be built from scratch and it is a nightmare to interact with sometimes.)
+- (https://github.com/ThomasMonkman/filewatch/tree/master)[Filewatch]
 
 # Structure:
 The entire program UI is handled and drawn by the [src/Interface.cpp](Interface) class. The interface is made up of [src/Pages/InterfacePages.cpp](Interface Pages) containing [src/Components/InterfaceComponents.cpp](Inteface Components).
