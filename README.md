@@ -13,9 +13,15 @@ In response, I had made a simple music player in GameMaker that allowed me to ha
 - [TagLib](https://taglib.org) (Requires to be built from scratch and it is a nightmare to interact with sometimes.)
 - [FileWatch](https://github.com/ThomasMonkman/filewatch/tree/master)
 
-# Structure:
+## Structure:
 The entire program UI is handled and drawn by the [Interface](src/Interface.cpp) class. The interface is made up of [Interface Pages](src/Pages/InterfacePages.cpp) containing [Interface Components](src/Components/InterfaceComponents.cpp).
 I could have probably used a UI library but... yeah, no. Too many bad experiences and I like to torture myself.
+
+Each [Song](src/Song.cpp) contains its own Metadata and Cover image data. Cover image data is always stored in a ``TagLib::ByteVector``. There are multiple ``Get...()`` functions to get the loaded data from a Song object. There are also static ``Get...()`` functions for getting general stored song objects. All Song objects on instantiation are added to a private std::vector, you can use the ``GetSong(int index)`` function to grab a song object from the list.
+
+[Album](src/Album.cpp) objects contain an internal private ``std::vector<Song*>`` containing pointers to Song objects. The Album also contains its own metadata and album cover image data, which can either be derived from a Song object containing valid image data or it will scan the folder for a valid image file. The Album may also assign cover images to songs that do not possess a valid image data. Image data is always stored as a ``TagLib::ByteVector``, which can be used to create [Sprite](src/Utilities/Sprite.cpp) objects for drawing and stuff. 
+
+Albums also have a few ``Get...()`` functions to get the Album data or get a song from the album. Songs are stored sorted by their album position, if there is one. The Songs that don't have an assigned number in the album are pushed to the end. Instanced Album objects are added to a private ``std::vector<Album*>`` containing all existing Album instances.
 
 ## Compiling
 Compiling should theoretically be very straight forward. I have tried my best to include all necessary dependencies with the project so that there is no need for any external downloads or compilation (I already went though that and it sucks).
